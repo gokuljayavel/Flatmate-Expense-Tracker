@@ -26,9 +26,10 @@ export const post = async (req, res) => {
 export const personal_expense = async (req,res) => {
     try {
         const expense = await expenseService.personal_expence_search(req,res);
-        setResponse(expense,res);
+        //setResponse(expense,res);
     } catch (error) {
-        setError(error,res)
+        // console.log(error)
+        // setError(error,res)
     }
 }
 

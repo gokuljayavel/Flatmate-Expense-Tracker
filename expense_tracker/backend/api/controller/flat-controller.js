@@ -26,7 +26,7 @@ export const post = async (req, res) => {
 export const get = async (req, res) => {
     try {
         const verified  = await flatservice.verify(req,res);
-        //setResponse(verified,res)
+       // setResponse(verified,res)
         console.log(verified);
     } catch (error) {
         setError(error,res)
@@ -37,9 +37,11 @@ export const get = async (req, res) => {
 export const userLogin = async (req,res) => {
     try {
         const log = await flatservice.login(req,res);
-        setResponse(log,res);
+        //setResponse(log,res);
         console.log(res.status);
     } catch (error) {
+        console.log("in error")
+        console.log(res)
         setError(error,res)
     }
 }

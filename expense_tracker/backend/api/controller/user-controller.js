@@ -17,7 +17,7 @@ export const post = async (req, res) => {
         console.log("in controller")
         const user = await userservice.save(req,res);
         console.log(res.status);
-       setResponse(user,res)
+      // setResponse(user,res)
         console.log(res);
 	} catch (error) {
 		setError(error,res)
@@ -39,10 +39,11 @@ export const get = async (req, res) => {
 export const fetchuser = async (req, res) => {
     try {
         const user  = await userservice.fetchUser(req,res)
-        console.log(user);
-        setResponse(user,res)
-        console.log(res);
+       // console.log(user);
+       // setResponse(user,res)
+        //console.log(res);
     } catch (error) {
+        console.log(error)
         setError(error,res)
     }
 }
@@ -51,18 +52,18 @@ export const loginuser = async (req, res) => {
     try {
         const user  = await userservice.userLogin(req,res)
         //console.log(user);
-        setResponse(user,res)
-        console.log(res);
+       // setResponse(user,res)
+        
     } catch (error) {
+       
         setError(error,res)
     }
 }
 export const updateuser = async (req,res) => {
     try {
         const user  = await userservice.update_profile(req,res)
-        //console.log(user);
+        console.log(user);
         setResponse(user,res)
-        console.log(res);
     } catch (error) {
         setError(error,res)
     }

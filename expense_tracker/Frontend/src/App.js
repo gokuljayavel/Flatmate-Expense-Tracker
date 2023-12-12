@@ -22,7 +22,7 @@ function App() {
 <Routes>
 
   <Route path='/' element={<ProtectedRoute1><PLogin/></ProtectedRoute1>}/>
-  <Route path='/login' element={<ProtectedRoute1><PLogin/></ProtectedRoute1>}/>
+  <Route path='/login' element={<ProtectedRoute1><PLog in/></ProtectedRoute1>}/>
   <Route path='/register' element={<ProtectedRoute1><PRegister/></ProtectedRoute1>}/> 
   <Route path='/choose' element={<ProtectedRoute><UseCreation/></ProtectedRoute>}/> 
   <Route path='/newUser' element={<ProtectedRoute><NewUser/></ProtectedRoute>}/> 

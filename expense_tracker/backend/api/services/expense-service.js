@@ -161,70 +161,93 @@ export const personal_expence_search = async (req,res) =>{
     //console.log(req.params)
    
     let ans =[]
-    console.log(req.query);
+    console.log(filter)
+    //console.log(req.query);
 
-    const {frequency} = req.query.frequency;
-    const {selectedRange} = req.query.selectedRange;
-    const   category  = req.query.type;
-    const   sub_category  = req.query.category;
-
-    console.log(req.query.frequency)
-    console.log(req.query.selectedRange)
-    console.log(req.query.type)
-    console.log(req.query.category)
-    let ct = req.query.selectedRange.split(',')
-    let date1;
-    let date2;
-
-    console.log(ct);
-    if(ct.length > 1){
-        date1 =  ct[0].split('T');
-        date2= ct[1].split('T');
-    date1 = new Date(date1[0]);
-    date2 = new Date(date2[0])
-    console.log(new Date(date2[0]));
-    }
+    if (Object.keys(req.query).length > 0) {
+        const {frequency} = req.query.frequency;
+        const {selectedRange} = req.query.selectedRange;
+        const   category  = req.query.type;
+        const   sub_category  = req.query.category;
+        let ct = req.query.selectedRange.split(',')
+        let date1;
+        let date2;
+        console.log(ct);
+        if(ct.length > 1){
+            date1 =  ct[0].split('T');
+            date2= ct[1].split('T');
+        date1 = new Date(date1[0]);
+        date2 = new Date(date2[0])
+        console.log(new Date(date2[0]));
+        }
+        let expenses = await expense.find(    {
+            //   conditional property to check if the frequency is equal to custom
+          ...(req.query.frequency !== "custom"
+            ? {
+                date: {
+                  $gt: moment().subtract(Number(req.query.frequency), "d").toDate(),
+                },
+              }
+            : {
+                date: {
+                  $gte: date1,
+                  $lte: date2,
+                },
+              }),
+          user_id: req.params.id,
+        //   conditional property
+          ...(req.query.type!=='all' && {category}),
+          ...(req.query.category!=='all' && {sub_category})
+        });
+    console.log(expenses);
     
-    let expenses = await expense.find(    {
-        //   conditional property to check if the frequency is equal to custom
-      ...(req.query.frequency !== "custom"
-        ? {
-            date: {
-              $gt: moment().subtract(Number(req.query.frequency), "d").toDate(),
-            },
-          }
-        : {
-            date: {
-              $gte: date1,
-              $lte: date2,
-            },
-          }),
-      user_id: req.params.id,
-    //   conditional property
-      ...(req.query.type!=='all' && {category}),
-      ...(req.query.category!=='all' && {sub_category})
-    });
-console.log(expenses);
+    
+    
+        for (var i=0;i<expenses.length;i++){
+            
+            let user =  JSON.parse(JSON.stringify(expenses[i]));
+            let date = moment(user.date).utc().format('YYYY-MM-DD')
+            user.type = user.category
+            user.category = await user.sub_category;
+            user.date = date;
+            //console.log(user.category)
+            ans.push(user);
+        }
+    
+        console.log(ans);
+       
+      }
+
+      else{
+        console.log("in else")
+        let expenses = await expense.find( {user_id: req.params.id });
+        for (var i=0;i<expenses.length;i++){
+            
+            let user =  JSON.parse(JSON.stringify(expenses[i]));
+            let date = moment(user.date).utc().format('YYYY-MM-DD')
+            user.type = user.category
+            user.category = await user.sub_category;
+            user.date = date;
+            //console.log(user.category)
+            ans.push(user);
+        }
+      }
 
 
 
-    for (var i=0;i<expenses.length;i++){
-        
-        let user =  JSON.parse(JSON.stringify(expenses[i]));
-        let date = moment(user.date).utc().format('YYYY-MM-DD')
-        user.type = user.category
-        user.category = await user.sub_category;
-        user.date = date;
-        //console.log(user.category)
-        ans.push(user);
-    }
+    // console.log(req.query.frequency)
+    // console.log(req.query.selectedRange)
+    // console.log(req.query.type)
+    // console.log(req.query.category)
+  
 
-    console.log(ans);
 
     
+
+    return res.status(200).send(ans);
    
 
-    return ans;
+    //return ans;
 }
 
 //used to search the group expense based on parameter fields

@@ -13,17 +13,17 @@ export const save = async (req,res) => {
 
 		if (error){
            
-			res.status(400);
-            saved = { message: error.details[0].message }
-            return saved
+			return res.status(400).send({ message: error.details[0].message });
+            // saved = { message: error.details[0].message }
+            // return saved
         }
 
 		const user = await User.findOne({ email: req.body.email });
 		if (user) {
             
-			 res.status(409)
-             saved = { message: "User with given email already Exist!" };
-             return saved
+			return res.status(409).send({ message: "User with given email already Exist!" })
+            //  saved = { message: "User with given email already Exist!" };
+            //  return saved
         }
         const use = req.body
 		 const salt = await bcrypt.genSalt(10);
@@ -48,8 +48,8 @@ export const save = async (req,res) => {
        
        await Flat.findOneAndUpdate({_id:req.params.id},flat);
      
-		res.status(201);
-        return saved;
+		return res.status(201).send(saved);
+       // return saved;
 }
 // verify the password
 export const verify = async (req,res) => {
@@ -83,9 +83,9 @@ export const verify = async (req,res) => {
 export const fetchUser = async (req,res) => {
 
 
-    let users = User.find({flatId:mongoose.Types.ObjectId(req.params.id) });
-    res.status(200);
-    return users;
+    let users = await User.find({flatId:mongoose.Types.ObjectId(req.params.id) });
+    return res.status(200).send(users);
+    //return users;
 }
 
 // this function is used to verify the login credentials of the user
@@ -97,26 +97,28 @@ export const userLogin = async (req,res) => {
       
         
     if (!user){
-        return res.status(401);
+        return res.status(401).send({ message: "Username or password doesn't match" });
 }
     const validPassword = await bcrypt.compare(
         req.body.password,
         user.password
     );
     if (!validPassword){
-        return res.status(401);
+        return res.status(401).send({ message: "Username or password doesn't match" });
     }
    
-    res.status(200);
-    return user;
+    return res.status(200).send(user);
 
 }
 
 // this function is used to update the child profile
 export const update_profile = async(req,res) => {
+
+
     const updated = User.findOneAndUpdate({_id:req.params.id},req.body,{
         new: true
     }).exec()
+ 
     return updated
 }
 

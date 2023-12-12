@@ -27,8 +27,8 @@ export const save = async (req,res) => {
         use.password = hashPassword
         const newUser = new Flat(use);
         newUser.save();
-		res.status(201).send({ message: "Flat created successfully" });
-        return res;
+		return res.status(201).send({ message: "Flat created successfully" });
+      //  return res;
 } 
 
 // used to verify the variables and check if the parameters entered are correct
@@ -55,7 +55,7 @@ export const verify = async (req,res) => {
         }).exec();
 		await token.remove();
 
-		res.status(200).send({ message: "Email verified successfully" });    
+		return res.status(200).send({ message: "Email verified successfully" });    
 
 }
 // used to validate the parent user credentials
@@ -69,19 +69,21 @@ export const login = async (req,res) => {
         
         
 		if (!user){
-			return res.status(401);
+            return res.status(401).send({ message: "Username or password doesn't match" });
     }
 
 		const validPassword = await bcrypt.compare(
 			req.body.password,
 			user.password
 		);
+        console.log(req.body.password)
+        console.log(validPassword)
 		if (!validPassword){
-			return res.status(401);
+			return res.status(401).send({ message: "Username or password doesn't match" });
         }
 
-        //res.status(200).send({ message: "Flat user login successfully" });
-        return user;
+        return res.status(200).send(user);
+        //return user;
 
 
 }
